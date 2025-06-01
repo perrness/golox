@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-var hadError = false
-
 func main() {
 	args := os.Args
 
@@ -28,7 +26,7 @@ func runFile(path string) {
 		panic(fmt.Sprintf("Error reading file: %v\n", err))
 	}
 
-	run(string(bytes))
+	hadError := run(string(bytes))
 
 	if hadError {
 		os.Exit(65)
@@ -43,12 +41,11 @@ func runPrompt() {
 		line := scanner.Text()
 
 		run(line)
-		hadError = false
 		print("> ")
 	}
 }
 
-func run(source string) {
+func run(source string) bool {
 	scanner := bufio.NewScanner(strings.NewReader(source))
 	scanner.Split(bufio.ScanWords)
 
@@ -61,4 +58,6 @@ func run(source string) {
 	for _, token := range tokens {
 		fmt.Println(token)
 	}
+
+	return false
 }
