@@ -80,6 +80,23 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addToken(GREATER)
 		}
+	case '/':
+		if s.match('/') {
+			for {
+				if s.peek() == '\n' && !s.isAtEnd() {
+					break
+				}
+				s.advance()
+			}
+		} else {
+			s.addToken(SLASH)
+		}
+	case ' ':
+	case '\r':
+	case '\t':
+		break
+	case '\n':
+		s.line++
 	default:
 		error(s.line, "Unexpected character.")
 	}
@@ -110,4 +127,12 @@ func (s *Scanner) match(expected byte) bool {
 	s.current++
 
 	return true
+}
+
+func (s *Scanner) peek() byte {
+	if s.isAtEnd() {
+		return 0
+	}
+
+	return s.source[s.current]
 }
