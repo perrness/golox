@@ -1,6 +1,8 @@
 package lox
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Scanner struct {
 	source  string
@@ -54,6 +56,8 @@ func (s *Scanner) scanToken() {
 		s.addToken(SEMICOLON)
 	case '*':
 		s.addToken(STAR)
+	default:
+		error(s.line, "Unexpected character.")
 	}
 }
 
