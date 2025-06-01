@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var hadError = false
+
 func main() {
 	args := os.Args
 
@@ -27,6 +29,10 @@ func runFile(path string) {
 	}
 
 	run(string(bytes))
+
+	if hadError {
+		os.Exit(65)
+	}
 }
 
 func runPrompt() {
@@ -37,6 +43,7 @@ func runPrompt() {
 		line := scanner.Text()
 
 		run(line)
+		hadError = false
 		print("> ")
 	}
 }
@@ -54,4 +61,13 @@ func run(source string) {
 	for _, token := range tokens {
 		fmt.Println(token)
 	}
+}
+
+func error(line int, message string) {
+	report(line, "", message)
+}
+
+func report(line int, where string, message string) {
+	fmt.Fprintln(os.Stderr, fmt.Sprintf("[line %d] Error%s: %s", line, where, message))
+	hadError = true
 }
