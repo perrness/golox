@@ -56,6 +56,30 @@ func (s *Scanner) scanToken() {
 		s.addToken(SEMICOLON)
 	case '*':
 		s.addToken(STAR)
+	case '!':
+		if s.match('=') {
+			s.addToken(BANG_EQUAL)
+		} else {
+			s.addToken(BANG)
+		}
+	case '=':
+		if s.match('=') {
+			s.addToken(EQUAL_EQUAL)
+		} else {
+			s.addToken(EQUAL)
+		}
+	case '<':
+		if s.match('=') {
+			s.addToken(LESS_EQUAL)
+		} else {
+			s.addToken(LESS)
+		}
+	case '>':
+		if s.match('=') {
+			s.addToken(GREATER_EQUAL)
+		} else {
+			s.addToken(GREATER)
+		}
 	default:
 		error(s.line, "Unexpected character.")
 	}
@@ -72,4 +96,18 @@ func (s *Scanner) addToken(tokenType TokenType) {
 func (s *Scanner) addTokenWithLiteral(tokenType TokenType, literal fmt.Stringer) {
 	text := s.source[s.start:s.current]
 	s.tokens = append(s.tokens, Token{tokenType, text, literal, s.line})
+}
+
+func (s *Scanner) match(expected byte) bool {
+	if s.isAtEnd() {
+		return false
+	}
+
+	if s.source[s.current] != expected {
+		return false
+	}
+
+	s.current++
+
+	return true
 }
