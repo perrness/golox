@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"loxgo/lox"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -46,14 +46,9 @@ func runPrompt() {
 }
 
 func run(source string) bool {
-	scanner := bufio.NewScanner(strings.NewReader(source))
-	scanner.Split(bufio.ScanWords)
+	scanner := lox.NewScanner(source)
 
-	var tokens []string
-
-	for scanner.Scan() {
-		tokens = append(tokens, scanner.Text())
-	}
+	tokens := scanner.ScanTokens()
 
 	for _, token := range tokens {
 		fmt.Println(token)

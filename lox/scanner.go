@@ -31,7 +31,13 @@ var keywords = map[string]TokenType{
 	"while":  WHILE,
 }
 
-func (s *Scanner) scanTokens() []Token {
+func NewScanner(source string) *Scanner {
+	return &Scanner{
+		source: source,
+	}
+}
+
+func (s *Scanner) ScanTokens() []Token {
 	var tokens []Token
 
 	for {
