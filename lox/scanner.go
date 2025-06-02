@@ -35,7 +35,9 @@ func (s *Scanner) isAtEnd() bool {
 
 func (s *Scanner) scanToken() {
 	s.advance()
-	switch s.source[s.current] {
+	b := s.source[s.current]
+
+	switch b {
 	case '(':
 		s.addToken(LEFT_PAREN)
 	case ')':
@@ -100,7 +102,11 @@ func (s *Scanner) scanToken() {
 	case '"':
 		s.string()
 	default:
-		error(s.line, "Unexpected character.")
+		if isDigit(b) {
+			s.number()
+		} else {
+			error(s.line, "Unexpected character.")
+		}
 	}
 }
 
@@ -160,4 +166,32 @@ func (s *Scanner) string() {
 		value := s.source[s.start+1 : s.current-1]
 		s.addTokenWithString(STRING, value)
 	}
+}
+
+func isDigit(b byte) bool {
+	return b >= '0' && b <= '9'
+}
+
+func (s *Scanner) number() {
+	for isDigit(s.peek()) {
+		s.advance()
+
+		if s.peek() == '.' && isDigit(s.peekNext()) {
+			s.advance()
+
+			for isDigit(s.peek()) {
+				s.advance()
+			}
+		}
+	}
+
+	s.addTokenWithString(NUMBER, s.source[s.start:s.current])
+}
+
+func (s *Scanner) peekNext() byte {
+	if s.current+1 >= len(s.source) {
+		return 0
+	}
+
+	return s.source[s.current+1]
 }
